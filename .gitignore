@@ -1,0 +1,9 @@
+# private: flash dumps hold Wi-Fi credentials and Tuya keys
+backup/
+*.bin
+*.log
+__pycache__/
+openbeken/
+bootswap/obk/
+bootswap/out/
+bootswap/blobs/

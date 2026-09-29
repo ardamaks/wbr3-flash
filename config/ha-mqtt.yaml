@@ -1,0 +1,39 @@
+# OpenBeken floor-heating thermostat (WBR3 / TuyaMCU) for HA's /config/mqtt.yaml.
+# Template for one unit: repeat each block per unit, replacing `thermostat_1` with that unit's
+# OBK shortName (= MQTT client name = topic).
+# OBK channels: 1 heating on/off, 2 mode, 3 target x10, 4 room x10, 5 floor x10, 6 heating active
+climate:
+  - name: "Thermostat 1 floor heating"
+    unique_id: thermostat_1_climate
+    availability_topic: "thermostat_1/connected"
+    modes: ["off", "heat"]
+    mode_state_topic: "thermostat_1/1/get"
+    mode_state_template: "{{ 'heat' if value == '1' else 'off' }}"
+    mode_command_topic: "thermostat_1/1/set"
+    mode_command_template: "{{ 1 if value == 'heat' else 0 }}"
+    temperature_state_topic: "thermostat_1/3/get"
+    temperature_state_template: "{{ value | float / 10 }}"
+    temperature_command_topic: "thermostat_1/3/set"
+    temperature_command_template: "{{ (value * 10) | round | int }}"
+    current_temperature_topic: "thermostat_1/4/get"
+    current_temperature_template: "{{ value | float / 10 }}"
+    action_topic: "thermostat_1/6/get"
+    action_template: "{{ 'heating' if value == '1' else 'idle' }}"
+    min_temp: 5
+    max_temp: 35
+    temp_step: 0.5
+    precision: 0.1
+    temperature_unit: "C"
+sensor:
+  - name: "Thermostat 1 floor temperature"
+    unique_id: thermostat_1_floor_temp
+    availability_topic: "thermostat_1/connected"
+    state_topic: "thermostat_1/5/get"
+    value_template: "{{ value | float / 10 }}"
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+  - name: "Thermostat 1 mode (raw)"
+    unique_id: thermostat_1_mode_raw
+    availability_topic: "thermostat_1/connected"
+    state_topic: "thermostat_1/2/get"
